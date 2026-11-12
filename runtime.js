@@ -118,6 +118,7 @@ const REACTIONS = Object.freeze({
   'autohide-dodge': ['autohide'],
   'autohide-dash': ['autohide'],
   'dock-padding': ['layout', 'animate'],
+  'dock-padding-ends': ['layout', 'animate'],
   'edge-distance': ['layout', 'animate'],
   'shrink-icons': ['shrink', 'layout', 'animate'],
   'border-radius': ['debounced_style', 'animate'],

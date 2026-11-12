@@ -501,8 +501,9 @@ export const DockBackground = registerClass(
       let dp = dock.dash.get_transformed_position();
       if (isNaN(dp[0]) || isNaN(dp[1])) return;
 
-      let padding =
-        iconSize * 0.1 * (dock.extension.dock_padding || 0) * scaleFactor;
+      let { ends, cross } = dock.dockPadding(iconSize, scaleFactor);
+      let padX = vertical ? cross : ends;
+      let padY = vertical ? ends : cross;
 
       if (first && last) {
         let tx = first._icon.translationX;
@@ -525,10 +526,10 @@ export const DockBackground = registerClass(
         }
 
         // padding
-        this.x -= padding;
-        width += padding * 2;
-        this.y -= padding;
-        height += padding * 2;
+        this.x -= padX;
+        width += padX * 2;
+        this.y -= padY;
+        height += padY * 2;
 
         if (!isNaN(width)) {
           this.width = width;
@@ -539,14 +540,7 @@ export const DockBackground = registerClass(
 
         this.x -= dock.x;
         this.y -= dock.y;
-        this._padding = padding;
-
-        // adjust padding
-        let az = -padding;
-        this.x += az / 2;
-        this.width -= az * (1 + !vertical);
-        this.y += az / 2;
-        this.height -= az * (1 + vertical);
+        this._padding = cross;
 
         if (panel_mode) {
           if (vertical) {

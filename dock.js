@@ -609,6 +609,43 @@ export let Dock = registerClass(
       );
     }
 
+    // background padding per side: ends along the dock, cross toward/away from the edge
+    dockPadding(
+      iconSize = this._iconSizeScaledDown,
+      scaleFactor = this._scaleFactor
+    ) {
+      let unit = iconSize * 0.15 * scaleFactor;
+      return {
+        ends: unit * (this.extension.dock_padding_ends ?? 0),
+        cross: unit * (this.extension.dock_padding ?? 0),
+      };
+    }
+
+    // GNOME's DND spawns the drag actor over getDragActorSource() at
+    // getDragActor() size; point both at the magnified renderer we draw
+    _hookDragActor(c) {
+      let appIcon = c.child;
+      if (!appIcon?.getDragActor || appIcon._d2daGetDragActor) return;
+
+      let renderer = () =>
+        c._renderer?.get_stage() && c._renderer.visible ? c._renderer : null;
+
+      appIcon._d2daGetDragActor = appIcon.getDragActor;
+      appIcon._d2daGetDragActorSource = appIcon.getDragActorSource;
+
+      appIcon.getDragActor = () => {
+        let source = renderer();
+        if (!source?.gicon) return appIcon._d2daGetDragActor();
+        let [width] = source.get_transformed_size();
+        return new St.Icon({
+          gicon: source.gicon,
+          icon_size: Math.round(width / (this._scaleFactor || 1)),
+        });
+      };
+      appIcon.getDragActorSource = () =>
+        renderer() ?? appIcon._d2daGetDragActorSource?.();
+    }
+
     // Pure function of settings + monitor scale: same inputs, same output,
     // no matter whether relayout() already ran or the dash is populated.
     // (Before, an unset _scaleFactor made upscale NaN -> 1, so callers
@@ -1032,6 +1069,7 @@ export let Dock = registerClass(
             this._needsLayout = true;
           });
         }
+        this._hookDragActor(c);
       });
 
       // link list the dash items
@@ -1406,7 +1444,14 @@ export let Dock = registerClass(
       // Footprint must provide enough cross-axis clearance for:
       // itemSize + magnification/rise expansion + bounce travel + edge distance + margin buffer
       let maxMagnifyRise = iconSize * (1.2 * (1 + magnify));
-      let fp = iconSize + maxMagnifyRise + bounceTravel + edgeDistance + 16;
+      let crossPadding = this.dockPadding(iconSize, 1).cross * 2;
+      let fp =
+        iconSize +
+        maxMagnifyRise +
+        bounceTravel +
+        edgeDistance +
+        crossPadding +
+        16;
       let maxFp = (vertical ? m.width : m.height) * 0.9;
       fp = Math.min(fp, maxFp / scaleFactor);
 
