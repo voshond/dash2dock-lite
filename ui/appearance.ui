@@ -198,7 +198,7 @@
                 <property name="draw-value">false</property>
                 <property name="value-pos">right</property>
                 <property name="orientation">horizontal</property>
-                <property name="digits">0</property>
+                <property name="digits">2</property>
                 <property name="adjustment">icon-border-radius-adjust</property>
               </object>
             </child>
@@ -305,7 +305,7 @@
                 <property name="draw-value">false</property>
                 <property name="value-pos">right</property>
                 <property name="orientation">horizontal</property>
-                <property name="digits">0</property>
+                <property name="digits">2</property>
                 <property name="adjustment">border-radius-adjust</property>
               </object>
             </child>
@@ -613,7 +613,7 @@
                 <property name="draw-value">false</property>
                 <property name="value-pos">right</property>
                 <property name="orientation">horizontal</property>
-                <property name="digits">0</property>
+                <property name="digits">2</property>
                 <property name="adjustment">label-border-radius-adjust</property>
               </object>
             </child>

@@ -151,6 +151,13 @@ const REACTIONS = Object.freeze({
   'trash-icon': ['layout', 'animate_refresh'],
 });
 
+const radiusFromIndex = (rads, value) => {
+  const index = Math.min(Math.max(value || 0, 0), rads.length - 1);
+  const lower = Math.floor(index);
+  const upper = Math.min(lower + 1, rads.length - 1);
+  return Math.round(rads[lower] + (rads[upper] - rads[lower]) * (index - lower));
+};
+
 export class Dash2DockRuntime {
   constructor(extension) {
     this.uuid = extension.uuid;
@@ -1116,7 +1123,7 @@ export class Dash2DockRuntime {
 
     // dash
     {
-      let r = rads[Math.floor(this.border_radius)];
+      let r = radiusFromIndex(rads, this.border_radius);
       let ss = [];
       if (this.panel_mode) {
         r = 0;
@@ -1133,7 +1140,7 @@ export class Dash2DockRuntime {
       let ss = [];
       ss.push(`margin: 2px;`);
 
-      let r = rads[Math.floor(this.icon_border_radius)];
+      let r = radiusFromIndex(rads, this.icon_border_radius);
       ss.push(`border-radius: ${r}px;`);
 
       {
@@ -1153,7 +1160,7 @@ export class Dash2DockRuntime {
     // dash label
     if (this.customize_label) {
       let rads = [0, 2, 6, 10, 12, 16, 20];
-      let r = rads[Math.floor(this.label_border_radius)];
+      let r = radiusFromIndex(rads, this.label_border_radius);
       let ss = [];
       ss.push(`border-radius: ${r}px;`);
 
