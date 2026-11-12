@@ -323,6 +323,10 @@ export const SettingsKeys = (patch) => {
       default_value: 0.5,
       widget_type: 'scale',
     },
+    'dock-padding-ends': {
+      default_value: 0.5,
+      widget_type: 'scale',
+    },
     'icon-spacing': {
       default_value: 0.5,
       widget_type: 'scale',

@@ -289,6 +289,11 @@ export let Animator = class {
     if (animated && edge_distance < 0) {
       edge_distance = 0;
     }
+    const { ends: endPad, cross: crossPad } = dock.dockPadding(
+      iconSize,
+      scaleFactor
+    );
+    edge_distance += crossPad;
 
     const scaleAtMax = 1.0 + magnify;
 
@@ -335,19 +340,18 @@ export let Animator = class {
     const secondaryMouseVal = vertical ? px : py;
     const firstIconSecondary = vertical ? firstIconObj._fixedPosition[0] : firstIconObj._fixedPosition[1];
 
-    const dockPad = iconSize * 0.1 * (dock.extension.dock_padding || 0) * scaleFactor;
     const tx1 = firstIconObj._icon ? (vertical ? firstIconObj._icon.translationY : firstIconObj._icon.translationX) : 0;
     const tx2 = lastIconObj._icon ? (vertical ? lastIconObj._icon.translationY : lastIconObj._icon.translationX) : 0;
 
-    const dockVisualStart = staticDockStart + (animated ? Math.min(0, tx1) : 0) - dockPad;
-    const dockVisualEnd = staticDockStart + restingL + (animated ? Math.max(0, tx2) : 0) + dockPad;
+    const dockVisualStart = staticDockStart + (animated ? Math.min(0, tx1) : 0) - endPad;
+    const dockVisualEnd = staticDockStart + restingL + (animated ? Math.max(0, tx2) : 0) + endPad;
     const isWithinPrimary = (primaryMouseVal >= dockVisualStart && primaryMouseVal <= dockVisualEnd);
 
     const iconCenterSec = firstIconSecondary + ICON_SIZE / 2;
     const secondaryDist = Math.abs(secondaryMouseVal - iconCenterSec);
     const maxSecReach = animated
-      ? (scaleAtMax * ICON_SIZE) / 2 + rise * scaleFactor + dockPad + 4
-      : ICON_SIZE / 2 + dockPad + 4;
+      ? (scaleAtMax * ICON_SIZE) / 2 + rise * scaleFactor + crossPad + 4
+      : ICON_SIZE / 2 + crossPad + 4;
     const isWithinSecondary = (secondaryDist <= maxSecReach);
 
     isWithin = isWithinPrimary && isWithinSecondary;
@@ -1057,7 +1061,7 @@ export let Animator = class {
           dock._background.width +
           iconSize * 0.2 * scaleFactor +
           edge_distance -
-          dock._background._padding * scaleFactor;
+          dock._background._padding;
         dock.struts.height = dock.height;
 
         if (dock.extension.autohide_dash) {
@@ -1079,7 +1083,7 @@ export let Animator = class {
           dock._background.height +
           iconSize * 0.2 * scaleFactor +
           edge_distance -
-          dock._background._padding * scaleFactor;
+          dock._background._padding;
 
         if (dock.extension.autohide_dash) {
           dock.struts.x = dock._background.x + dock._monitor.x;
