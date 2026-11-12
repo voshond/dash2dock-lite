@@ -1,6 +1,6 @@
 all: build install lint
 
-.PHONY: build install test-hot-reload publish check-devkit test-shell test-shell2 check smoke lint check-settings
+.PHONY: build install install-remote test-hot-reload publish check-devkit test-shell test-shell2 check smoke lint check-settings
 
 RUNTIME_DIR ?= $(or $(XDG_RUNTIME_DIR),/run/user/$(shell id -u))
 # gnome-shell writes this at startup as a crash marker; if it is left behind
@@ -47,6 +47,10 @@ test-hot-reload:
 	cd build && zip -qr ../d2da-hot-reload-test.zip .
 	dbus-run-session -- gnome-shell-test-tool --headless --disable-animations \
 		--extension d2da-hot-reload-test.zip tests/hot-reload.js
+
+# Sync this tree to HOST over SSH and hot reload the running dock there.
+install-remote:
+	tools/install-remote.sh $(HOST)
 
 clean:
 	rm -rf ./build

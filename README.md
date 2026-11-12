@@ -182,10 +182,11 @@ make g44
 `extension.js` is a small loader; the dock itself lives in `runtime.js`. Once a session has loaded the loader (one logout after the first install), reinstalling swaps in the new code within a second, without logging out:
 
 ```bash
-make install
+make install                  # this machine
+make install-remote HOST=arch # another GNOME machine over SSH
 ```
 
-It writes a `.reload` marker after all files are in place. The loader imports a fresh copy of the modules from a temporary directory, disables the old dock and enables the new one. An import or activation failure keeps the previous dock running. Results are logged as `d2da: hot reloaded` or `d2da: hot reload failed` (see `journalctl --user -b -o cat`).
+Both write a `.reload` marker after all files are in place. The loader imports a fresh copy of the modules from a temporary directory, disables the old dock and enables the new one. An import or activation failure keeps the previous dock running. Results are logged as `d2da: hot reloaded` or `d2da: hot reload failed` (see `journalctl --user -b -o cat`).
 
 Changes to `extension.js`, `runtimeCopy.js`, `metadata.json`, preferences or schemas still need a new login. Old modules and GObject types stay in memory until logout, so this is for development, not continuous rebuilding. `make test-hot-reload` checks the reload lifecycle in a headless shell.
 
