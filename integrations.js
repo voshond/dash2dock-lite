@@ -157,7 +157,11 @@ export const Integrations = class {
           obj._dash_to_dock_blur.update_size_orig =
             obj._dash_to_dock_blur.update_size;
         }
-        if (hook && this.extension.blur_background) {
+        if (
+          hook &&
+          this.extension.blur_background &&
+          !this.bmsTracksDock()
+        ) {
           obj._dash_to_dock_blur.update_size = () => {};
         } else if (obj._dash_to_dock_blur.update_size_orig) {
           obj._dash_to_dock_blur.update_size =
@@ -172,8 +176,27 @@ export const Integrations = class {
     this._bms = null;
   }
 
+  // blur-my-shell 78+ finds, sizes and clips the dock blur by itself
+  bmsTracksDock() {
+    return (
+      this._bms?.stateObj?._dash_to_dock_blur?.pending_docks instanceof Map
+    );
+  }
+
+  bms_update_visibility(dock) {
+    if (!this.bmsTracksDock()) return false;
+    dock.fake_dash.visible =
+      dock.extension.blur_background && dock._background.opacity > 0;
+    return true;
+  }
+
   bms_update_size(animator) {
     let dock = animator.dock;
+
+    if (this.bms_update_visibility(dock)) {
+      animator._bms = null;
+      return;
+    }
 
     // blur my shell
     let bms = dock.get_children().find((child) => {
