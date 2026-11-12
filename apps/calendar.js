@@ -1,11 +1,11 @@
-import GObject from 'gi://GObject';
 import Clutter from 'gi://Clutter';
 import Cairo from 'gi://cairo';
 import St from 'gi://St';
 
 import { Drawing } from '../drawing.js';
+import { registerClass } from '../gtype.js';
 
-export const Calendar = GObject.registerClass(
+export const Calendar = registerClass(
   {},
   class Calendar extends St.Widget {
     _init(x, settings = {}) {
@@ -34,7 +34,7 @@ export const Calendar = GObject.registerClass(
   }
 );
 
-const CalendarCanvas = GObject.registerClass(
+const CalendarCanvas = registerClass(
   {},
   class CalendarCanvas extends St.DrawingArea {
     _init(settings = {}) {

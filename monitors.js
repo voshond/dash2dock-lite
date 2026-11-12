@@ -2,9 +2,10 @@
 
 import Gio from 'gi://Gio';
 import GObject from 'gi://GObject';
+import { registerClass } from './gtype.js';
 
 // from Dash-to-Dock
-export const MonitorsConfig = GObject.registerClass(
+export const MonitorsConfig = registerClass(
   {
     Signals: {
       updated: {},

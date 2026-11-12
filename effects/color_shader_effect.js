@@ -2,8 +2,8 @@
 
 import Shell from 'gi://Shell';
 import GLib from 'gi://GLib';
-import GObject from 'gi://GObject';
 import Clutter from 'gi://Clutter';
+import { registerClass } from '../gtype.js';
 
 const shaderSourceCache = new Map();
 
@@ -26,7 +26,7 @@ export const getShaderSource = (extensionDir, filename) => {
   }
 };
 
-export const ColorShaderEffect = GObject.registerClass(
+export const ColorShaderEffect = registerClass(
   {},
   class ColorShaderEffect extends Clutter.ShaderEffect {
     _init(params = {}, shaderFilename = '') {

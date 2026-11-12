@@ -7,7 +7,6 @@ import { trySpawnCommandLine } from './utils.js';
 // import { trySpawnCommandLine } from 'resource:///org/gnome/shell/misc/util.js';
 
 import Gio from 'gi://Gio';
-import GObject from 'gi://GObject';
 import Clutter from 'gi://Clutter';
 import St from 'gi://St';
 import Graphene from 'gi://Graphene';
@@ -15,10 +14,11 @@ const Point = Graphene.Point;
 
 import { DockPosition } from './dock.js';
 import { Vector } from './vector.js';
+import { registerClass } from './gtype.js';
 
 const ANIM_POSITION_PER_SEC = 450 / 1000;
 
-export const DockItemList = GObject.registerClass(
+export const DockItemList = registerClass(
   {},
   class DockItemList extends St.Widget {
     _init(renderer, params) {

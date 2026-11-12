@@ -1,6 +1,6 @@
 all: build install lint
 
-.PHONY: build install publish check-devkit test-shell test-shell2 check smoke lint check-settings
+.PHONY: build install test-hot-reload publish check-devkit test-shell test-shell2 check smoke lint check-settings
 
 RUNTIME_DIR ?= $(or $(XDG_RUNTIME_DIR),/run/user/$(shell id -u))
 # gnome-shell writes this at startup as a crash marker; if it is left behind
@@ -34,6 +34,19 @@ install: build
 	rm -rf ~/.local/share/gnome-shell/extensions/dash2dock-lite@icedman.github.com/eslint.config.js
 	rm -rf ~/.local/share/gnome-shell/extensions/dash2dock-lite@icedman.github.com/package.json
 	rm -rf ~/.local/share/gnome-shell/extensions/dash2dock-lite@icedman.github.com/package-lock.json
+	date +%s%N > ~/.local/share/gnome-shell/extensions/dash2dock-lite@icedman.github.com/.reload.tmp
+	mv -f ~/.local/share/gnome-shell/extensions/dash2dock-lite@icedman.github.com/.reload.tmp ~/.local/share/gnome-shell/extensions/dash2dock-lite@icedman.github.com/.reload
+
+# Headless shell: runtime swaps, import/activation rollback, .reload marker
+# and a reload racing disable. See tests/hot-reload.js. The test zip also
+# lists the running shell's version so the tool does not skip it as outdated.
+test-hot-reload:
+	./tools/publish.sh
+	python3 -I -c "import json, subprocess; p = 'build/metadata.json'; m = json.load(open(p)); v = subprocess.check_output(['gnome-shell', '--version'], text=True).split()[-1].split('.')[0]; m['shell-version'] = sorted(set(m['shell-version']) | {v}); json.dump(m, open(p, 'w'), indent=2)"
+	rm -f d2da-hot-reload-test.zip
+	cd build && zip -qr ../d2da-hot-reload-test.zip .
+	dbus-run-session -- gnome-shell-test-tool --headless --disable-animations \
+		--extension d2da-hot-reload-test.zip tests/hot-reload.js
 
 clean:
 	rm -rf ./build

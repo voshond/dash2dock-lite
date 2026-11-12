@@ -1,13 +1,13 @@
 // adapted from https://github.com/jderose9/dash-to-panel
 // adapted from https://github.com/micheleg/dash-to-dock
 
-import GObject from 'gi://GObject';
 import Clutter from 'gi://Clutter';
 import Cairo from 'gi://cairo';
 
 import { Drawing } from '../drawing.js';
+import { registerClass } from '../gtype.js';
 
-export const DebugOverlay = GObject.registerClass(
+export const DebugOverlay = registerClass(
   {},
   class D2DLDebugOverlay extends Clutter.Actor {
     _init(x, y) {

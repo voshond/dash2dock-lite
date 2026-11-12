@@ -5,7 +5,6 @@ import * as Fav from 'resource:///org/gnome/shell/ui/appFavorites.js';
 import * as Compat from './compat.js';
 
 import Shell from 'gi://Shell';
-import GObject from 'gi://GObject';
 import Clutter from 'gi://Clutter';
 import Graphene from 'gi://Graphene';
 import St from 'gi://St';
@@ -27,6 +26,7 @@ import {
   isOverlapRect,
   getDownloadsDir,
 } from './utils.js';
+import { registerClass } from './gtype.js';
 
 const Point = Graphene.Point;
 
@@ -49,7 +49,7 @@ const ANIM_DEBOUNCE_END_DELAY = 750;
 const MIN_SCROLL_RESOLUTION = 4;
 const MAX_SCROLL_RESOLUTION = 10;
 
-export let Dock = GObject.registerClass(
+export let Dock = registerClass(
   {},
   class DashToDock extends St.Widget {
     _init(params) {
