@@ -5,7 +5,6 @@ import * as Fav from 'resource:///org/gnome/shell/ui/appFavorites.js';
 import * as Compat from './compat.js';
 
 import Shell from 'gi://Shell';
-import GObject from 'gi://GObject';
 import Clutter from 'gi://Clutter';
 import Graphene from 'gi://Graphene';
 import St from 'gi://St';
@@ -27,6 +26,7 @@ import {
   isOverlapRect,
   getDownloadsDir,
 } from './utils.js';
+import { registerClass } from './gtype.js';
 
 const Point = Graphene.Point;
 
@@ -49,7 +49,7 @@ const ANIM_DEBOUNCE_END_DELAY = 750;
 const MIN_SCROLL_RESOLUTION = 4;
 const MAX_SCROLL_RESOLUTION = 10;
 
-export let Dock = GObject.registerClass(
+export let Dock = registerClass(
   {},
   class DashToDock extends St.Widget {
     _init(params) {
@@ -75,34 +75,25 @@ export let Dock = GObject.registerClass(
       this._monitorIndex = Main.layoutManager.primaryIndex;
       this._needsLayout = true;
 
+      // for blur-my-shell: it requires the slider to be a real actor
+      this._slider = new St.Bin({ visible: false });
+      this._slider.get_child = () => this;
+      this._slider.get_parent = () => this;
+
+      // pretend to be Dash-to-Dock. blur-my-shell inserts its blur below
+      // this dash and sizes it to dash._background, so it stays below ours
+      this.fake_dash = new St.Widget({
+        name: 'dash',
+        reactive: false,
+        width: 1,
+        height: 1,
+        visible: false,
+      });
+      this.add_child(this.fake_dash);
+
       this._background = new DockBackground({ name: 'd2daBackground' });
       this.add_child(this._background);
-
-      // for blur-my-shell
-      this._slider = {
-        // connect: () => false,
-        get_child: () => {
-          return this;
-        },
-        get_parent: () => {
-          return this;
-        },
-      };
-
-      // pretend to be Dash-to-Dock
-      // required by blur-my-shell to find the dash upon disabling
-      this.fake_dash = new St.Widget({ name: 'dash' });
-      this.fake_dash.has_allocation = () => { return true; };
-      this.add_child(this.fake_dash);
-      this.fake_dash_background = new St.Widget({
-        name: 'd2daFakeDashBackground',
-        style_class: 'dash-background',
-      });
-      this.fake_dash.connect = () => false;
-      this.fake_dash_background.connect = () => false;
-      this.fake_dash.add_child(this.fake_dash_background);
-      this.fake_dash._background = this.fake_dash_background;
-      this.fake_dash.visible = false;
+      this.fake_dash._background = this._background;
 
       this.renderArea = new St.Widget({
         name: 'DockRenderArea',
@@ -175,6 +166,7 @@ export let Dock = GObject.registerClass(
         this.dwell.destroy();
         this.struts = null;
         this.dwell = null;
+        this._slider.destroy();
         this._slider = null;
       }
       super.destroy();
@@ -1480,6 +1472,7 @@ export let Dock = GObject.registerClass(
         this.extension.overview_transparent_background;
 
       this._background.opacity = transparent ? 0 : 255;
+      this.extension.integrations?.bms_update_visibility(this);
 
       if (this.animator._bms && this.animator._bms.first_child) {
         this.animator._bms.first_child.visible =

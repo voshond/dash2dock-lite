@@ -1,11 +1,11 @@
 // adapted from gnome-shell-cairo clock extension
 
-import GObject from 'gi://GObject';
 import Clutter from 'gi://Clutter';
 import Cairo from 'gi://cairo';
 import St from 'gi://St';
 
 import { Drawing } from '../drawing.js';
+import { registerClass } from '../gtype.js';
 
 function _drawFrame(ctx, size, settings) {
   if (!settings.frame) {
@@ -122,7 +122,7 @@ function _drawClock(ctx, date, x, y, size, settings) {
   ctx.restore();
 }
 
-export const Clock = GObject.registerClass(
+export const Clock = registerClass(
   {},
   class Clock extends St.Widget {
     _init(x, settings = {}) {
@@ -150,7 +150,7 @@ export const Clock = GObject.registerClass(
   }
 );
 
-const ClockCanvas = GObject.registerClass(
+const ClockCanvas = registerClass(
   {},
   class ClockCanvas extends St.DrawingArea {
     _init(settings = {}) {

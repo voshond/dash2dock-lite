@@ -13,7 +13,6 @@ import { Dash } from 'resource:///org/gnome/shell/ui/dash.js';
 
 import Gio from 'gi://Gio';
 import GioUnix from 'gi://GioUnix';
-import GObject from 'gi://GObject';
 import Clutter from 'gi://Clutter';
 import St from 'gi://St';
 
@@ -23,6 +22,7 @@ import {
 } from 'resource:///org/gnome/shell/ui/dash.js';
 
 import { DockPosition } from './dock.js';
+import { registerClass } from './gtype.js';
 
 class DockItemMenu extends PopupMenu.PopupMenu {
   constructor(sourceActor, side = St.Side.TOP, params = {}) {
@@ -137,7 +137,7 @@ class DockItemMenu extends PopupMenu.PopupMenu {
   }
 }
 
-const DockItemOverlay = GObject.registerClass(
+const DockItemOverlay = registerClass(
   {},
   class DockItemOverlay extends St.Widget {
     _init(renderer, params) {
@@ -154,7 +154,7 @@ const DockItemOverlay = GObject.registerClass(
   }
 );
 
-export const DockItemDotsOverlay = GObject.registerClass(
+export const DockItemDotsOverlay = registerClass(
   {},
   class DockItemDotsOverlay extends DockItemOverlay {
     _init(renderer, params = {}) {
@@ -220,7 +220,7 @@ export const DockItemDotsOverlay = GObject.registerClass(
   }
 );
 
-export const DockItemBadgeOverlay = GObject.registerClass(
+export const DockItemBadgeOverlay = registerClass(
   {},
   class DockItemBadgeOverlay extends DockItemOverlay {
     _init(renderer, params = {}) {
@@ -265,7 +265,7 @@ export const DockItemBadgeOverlay = GObject.registerClass(
   }
 );
 
-export const DockIcon = GObject.registerClass(
+export const DockIcon = registerClass(
   {},
   class DockIcon extends DashIcon {
     _init(app) {
@@ -357,7 +357,7 @@ export const DockIcon = GObject.registerClass(
   }
 );
 
-export const DockItemContainer = GObject.registerClass(
+export const DockItemContainer = registerClass(
   {},
   class DockItemContainer extends DashItemContainer {
     _init(params) {
@@ -469,7 +469,7 @@ export const DockItemContainer = GObject.registerClass(
   }
 );
 
-export const DockBackground = GObject.registerClass(
+export const DockBackground = registerClass(
   {},
   class DockBackground extends St.Widget {
     _init(params) {

@@ -1,14 +1,14 @@
 // adapted from https://github.com/jderose9/dash-to-panel
 // adapted from https://github.com/micheleg/dash-to-dock
 
-import GObject from 'gi://GObject';
 import Clutter from 'gi://Clutter';
 import Cairo from 'gi://cairo';
 import St from 'gi://St';
 
 import { Drawing } from '../drawing.js';
+import { registerClass } from '../gtype.js';
 
-export const Dot = GObject.registerClass(
+export const Dot = registerClass(
   {},
   class Dot extends St.Widget {
     _init(x, settings = {}) {
@@ -33,7 +33,7 @@ export const Dot = GObject.registerClass(
   }
 );
 
-const DotCanvas = GObject.registerClass(
+const DotCanvas = registerClass(
   {},
   class DotCanvas extends St.DrawingArea {
     _init(settings = {}) {

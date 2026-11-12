@@ -2,10 +2,10 @@
 
 'use strict';
 
-import GObject from 'gi://GObject';
 import { ColorShaderEffect } from './color_shader_effect.js';
+import { registerClass } from '../gtype.js';
 
-export const TintEffect = GObject.registerClass(
+export const TintEffect = registerClass(
   {},
   class D2DATintEffect extends ColorShaderEffect {
     _init(params = {}) {
